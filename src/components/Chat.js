@@ -17,18 +17,12 @@ export default function Chat() {
     const [typing, setTyping] = useState(false);
     const wsURL = 'http://localhost:3030';
     const [chatUsers, setChatUsers] = useState([]);
-    console.log("chat usser is ", chatUser);
 
     useEffect(() => {
-        console.log(chatUser.isGroupChat);
         if (!chatUser.isGroupChat) {
             chatUser.receivers.forEach((user) => {
-                console.log("asdf", user._id, userData._id, user._id != userData._id);
                 if (user._id != userData._id) {
-                    console.log("Your user is ", user);
                     setChatUsers([user]);
-
-                    console.log("++++++++++", chatUsers);
                 }
             })
         }
@@ -39,9 +33,7 @@ export default function Chat() {
                     users.push(chatUser.receivers[i]);
                 }
             }
-            console.log("array is users ", users);
-            setChatUsers([chatUser.receivers]);
-            console.log("after map ", chatUsers.length);
+            setChatUsers(users);
         }
     }, [chatUser])
 
@@ -127,9 +119,25 @@ export default function Chat() {
             })
     }
 
+    function handleGroupChatUser(senderId) {
+        for (let i of chatUsers) {
+            if (i._id == senderId) {
+                return i.userName;
+            }
+        }
+    }
+
+    function handleChatTyping(id){
+        socket.on('typing',id);
+        setTyping(true);
+    }
+
+    function handleStopTyping(id){
+        socket.on('stop typing',id);
+        setTimeout(()=>setTyping(false),2000);
+    }
+
     const formattedChats = oldChats.map((chat) => {
-        console.log("Chat from map oldchats is ",chat);
-        console.log("from map ================", chatUsers[0]);
         return (
             <>
                 <div className={chat.sender == userData._id ? 'msg right-msg' : 'msg left-msg'}>
@@ -139,8 +147,7 @@ export default function Chat() {
 
                     <div class="msg-bubble">
                         <div class="msg-info">
-                            <div class="msg-info-name">{chat.sender == userData._id ? userData.userName : chatUser.isGroupChat ? chatUsers.some((user)=>user._id != chat.sender ? '' : user.userName):chatUsers[0].userName}</div>
-                            <div class="msg-info-name">{chatUser.isGroupChat && chatUsers.every((user)=>user._id == chat.sender ? user.userName : '')}</div>
+                            <div class="msg-info-name">{chat.sender == userData._id ? userData.userName : chatUsers.length == 1 ? chatUsers[0].userName : handleGroupChatUser(chat.sender)}</div>
                             <div class="msg-info-time">{chat.sender == userData._id ?
                                 userData.createdAt?.split('T')[1].split(':')[0] + ":" + userData.createdAt?.split('T')[1].split(':')[1] :
                                 chatUser.createdAt?.split('T')[1].split(':')[0] + ":" + userData.createdAt?.split('T')[1].split(':')[1]}</div>
@@ -155,7 +162,8 @@ export default function Chat() {
         )
     });
 
-    console.log("from return ", chatUsers);
+    console.log(chatUsers);
+
     return (
         <>
             <div id='chats'>
@@ -166,25 +174,27 @@ export default function Chat() {
                                 <img src={!chatUser.isGroupChat ? chatUsers[0].userImg : chatUser.groupImage} alt='chat-user-img' />
                             </div>
                             <text style={{ fontWeight: "bold" }}>{!chatUser.isGroupChat ? chatUsers[0].userName : chatUser.groupName}</text>
-                            {/* <text style={{ fontWeight: "bold" }}>{chatUser.isGroupChat && chatUsers.groupName}</text> */}
                         </div>
                     </header>
                     <main class="msger-chat" id='messages'>
                         <div >
                             {loading ?
                                 <span className="loader"></span> : formattedChats}
-                            {/* {              {typing ? <div className="typing">
-                         <div className="typing__dot"></div>
-                         <div className="typing__dot"></div>
-                         <div className="typing__dot"></div>
-                   </div> 
-        : ""} */}
+                            {typing ? <div className="typing">
+                                <div className="typing__dot"></div>
+                                <div className="typing__dot"></div>
+                                <div className="typing__dot"></div>
+                            </div>
+                                : ""}
                         </div>
                     </main>
 
                     <form class="msger-inputarea">
                         <input type="text" class="msger-input" value={chatContent.content} placeholder="Enter your message..." onChange={(e) => {
                             setChatContent({ content: e.target.value });
+                            handleChatTyping(chatId);
+                        }} onKeyUp={()=>{
+                            handleStopTyping(chatId);
                         }} />
                         <button type="submit" class="msger-send-btn" onClick={(e) => {
                             e.preventDefault();

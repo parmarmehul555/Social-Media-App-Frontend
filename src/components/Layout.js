@@ -18,8 +18,6 @@ export default function Layout() {
     const [chatUsers, setChatUsers] = useState([]);
     const [groupChatUser, setGroupChatUser] = useState([]);
 
-    console.log('all chats is ', allChats);
-
     const formattedProfile = allChats.map((item, index) => {
         return (
             <>
@@ -27,7 +25,6 @@ export default function Layout() {
                     if (!item.isGroupChat) {
                         setChatUsers(item.receivers);
                         // dispatch(setChatUser(chatUsers));
-                        console.log("your clicked item is ", item);
                         dispatch(setChatUser(item));
                         navigate(`/chat/${item._id}`);
                     }
@@ -60,8 +57,6 @@ export default function Layout() {
             </>
         )
     });
-
-    console.log("Formatted profiles is ", formattedProfile);
 
     return (
         <>

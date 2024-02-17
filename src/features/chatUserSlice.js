@@ -9,8 +9,6 @@ const chatUserSlice = createSlice({
     initialState,
     reducers:{
         setChatUser : (state,action)=>{
-
-            console.log("Action payload ",action.payload);
             state.chatUser = action.payload;
         }
     }
