@@ -20,7 +20,7 @@ export default function Chat() {
 
     useEffect(() => {
         if (!chatUser.isGroupChat) {
-            chatUser.receivers.forEach((user) => {
+            chatUser.receivers.map((user) => {
                 if (user._id != userData._id) {
                     setChatUsers([user]);
                 }
@@ -133,9 +133,11 @@ export default function Chat() {
     }
 
     function handleStopTyping(id){
-        socket.on('stop typing',id);
-        setTimeout(()=>setTyping(false),2000);
+        socket.emit('stop typing',id);
+        setTimeout(()=>setTyping(false),5000);
     }
+
+    console.log("beforre map ",chatUsers);
 
     const formattedChats = oldChats.map((chat) => {
         return (
@@ -162,7 +164,7 @@ export default function Chat() {
         )
     });
 
-    console.log(chatUsers);
+    console.log("beforre return ",chatUsers);
 
     return (
         <>

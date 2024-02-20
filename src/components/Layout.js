@@ -65,7 +65,7 @@ export default function Layout() {
                     <div class="col-2 part">
                         <div className="sidebar-data">
                             <div className="icon"><i class="fa-solid fa-house"></i></div>
-                            <div className="icon-name"><text>Home</text></div>
+                            <div className="icon-name"><Link className="decoration" to={'/home'}><text>Home</text></Link></div>
                         </div>
                         <div className="sidebar-data">
                             <div className="icon"><i class="fa-brands fa-facebook-messenger"></i></div>
