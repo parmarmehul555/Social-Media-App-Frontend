@@ -14,7 +14,7 @@ export default function Layout() {
     const dispatch = useDispatch();
     dispatch(myChatProfiles(myChats));
     const allChats = useSelector((state) => state.myChats.chatProfiles);
-    const [userData] = useGetUser();
+    const userData = useGetUser();
     const [chatUsers, setChatUsers] = useState([]);
     const [groupChatUser, setGroupChatUser] = useState([]);
 

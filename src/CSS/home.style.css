@@ -15,7 +15,6 @@
 .user-header .user-img{
     height: 35px;
     width: 35px;
-    background-color: blue;
     overflow: hidden;
     border-radius: 100%;
 }
@@ -57,12 +56,17 @@
     margin-top: 2vh;
 }
 
-#post-user-img{
-    background-color: blue;
+.comment-data #post-user-img{
     height: 40px;
     width: 40px;
     overflow: hidden;
     border-radius: 50%;
+}
+
+.comment-data #post-user-img img{
+    height: 40px;
+    width: 40px;
+    object-fit: cover;
 }
 
 #post-userdata{
@@ -80,3 +84,10 @@
     font-size: 15px;
 }
 
+#comment-box{
+    margin-top: 2vh;
+}
+
+#show-comment-box{
+    height: 30%;
+}

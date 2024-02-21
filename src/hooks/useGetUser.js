@@ -1,10 +1,7 @@
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
-import { userInfo } from "../features/userSlice";
 
 function useGetUser() {
-    const dispatch = useDispatch();
-    const [userData,setUserData] = useState({});
+    const [userData, setUserData] = useState({});
     useEffect(() => {
         fetch('http://localhost:3030/user/userdetails', {
             method: 'GET',
@@ -14,13 +11,16 @@ function useGetUser() {
             }
         }).then((res) => {
             if (res.ok) return res.json();
+            else {
+                throw new Error("Can not get user!!")
+            }
         }).then((res) => {
             setUserData(res.isUser);
         }).catch((error) => {
             console.log("ERROR from redux while fetching data ", error);
         })
     }, []);
-    return [userData,setUserData];
+    return userData;
 }
 
 export default useGetUser;

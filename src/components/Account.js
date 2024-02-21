@@ -6,7 +6,7 @@ import useGetUser from '../hooks/useGetUser';
 import { userInfo } from '../features/userSlice';
 
 export default function Account() {
-    const [userData, setUserData] = useGetUser();
+    const userData = useGetUser();
     const dispatch = useDispatch();
 
     dispatch(userInfo(userData));

@@ -2,14 +2,15 @@ import { useParams } from 'react-router-dom'
 import '../CSS/chat.style.css'
 import { MyChats, socket } from './MyChats'
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import useGetUser from '../hooks/useGetUser';
 import { io } from 'socket.io-client';
+import { userInfo } from '../features/userSlice';
 
 export default function Chat() {
     const { chatId } = useParams();
     const [oldChats, setOldChats] = useState([]);
-    const [userData, setUserData] = useGetUser();
+    const userData = useGetUser();
     const chatUser = useSelector(state => state.chatUser.chatUser);
     const [loading, setLoading] = useState(true);
     const [chatContent, setChatContent] = useState({});
@@ -17,8 +18,10 @@ export default function Chat() {
     const [typing, setTyping] = useState(false);
     const wsURL = 'http://localhost:3030';
     const [chatUsers, setChatUsers] = useState([]);
-
+    console.log('chatUser',chatUser);
+    console.log('userData',userData);
     useEffect(() => {
+        
         if (!chatUser.isGroupChat) {
             chatUser.receivers.map((user) => {
                 if (user._id != userData._id) {
@@ -35,7 +38,7 @@ export default function Chat() {
             }
             setChatUsers(users);
         }
-    }, [chatUser])
+    },[chatUser])
 
     useEffect(() => {
         var socket = io(wsURL);
@@ -173,9 +176,9 @@ export default function Chat() {
                     <header class="msger-header">
                         <div class="msger-header-title">
                             <div id='userImg'>
-                                <img src={!chatUser.isGroupChat ? chatUsers[0].userImg : chatUser.groupImage} alt='chat-user-img' />
+                                <img src={!chatUser.isGroupChat ? chatUsers[0]?.userImg : chatUser.groupImage} alt='chat-user-img' />
                             </div>
-                            <text style={{ fontWeight: "bold" }}>{!chatUser.isGroupChat ? chatUsers[0].userName : chatUser.groupName}</text>
+                            <text style={{ fontWeight: "bold" }}>{!chatUser.isGroupChat ? chatUsers[0]?.userName : chatUser.groupName}</text>
                         </div>
                     </header>
                     <main class="msger-chat" id='messages'>

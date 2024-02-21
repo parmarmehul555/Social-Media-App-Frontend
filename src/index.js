@@ -23,7 +23,7 @@ root.render(
           <Route path='/profile' element={<Account />} />
           <Route path='/editprofile' element={<EditProfile />} />
           <Route path='/home' element={<Home />} />
-          <Route path='/chat' element={<Chat/>}/>
+          {/* <Route path='/chat' element={<Chat/>}/> */}
           <Route path='/chat/:chatId' element={<Chat/>}/>
         </Route>
       </Routes>

@@ -6,6 +6,7 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
+
 const style = {
     position: 'absolute',
     top: '50%',
@@ -19,10 +20,13 @@ const style = {
 };
 
 export default function Home() {
-    const [userData, setUserData] = useGetUser();
+    const userData = useGetUser();
 
     const [posts, setPosts] = useState([]);
     const [open, setOpen] = useState(false);
+    const [commentData, setCommentData] = useState("");
+    const [postComments, setPostComments] = useState([]);
+
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
@@ -43,7 +47,9 @@ export default function Home() {
                 }
             })
             .then((res) => {
+                console.log(res);
                 setPosts(res);
+                console.log("post comments is ", postComments);
                 console.log("your all posts ", posts);
             })
             .catch((error) => {
@@ -75,17 +81,16 @@ export default function Home() {
     const formattedComments = posts.map((post) => {
         return (
             post.postComments.map((comment) => {
-                console.log(comment);
-                return(
+                return (
                     <div className="comment-data">
-                    <div id="post-user-img">
-                        <img src={comment.commentedUser.userImg} alt="user-profile-picture" />
+                        <div id="post-user-img">
+                            <img src={comment.commentedUser.userImg} alt="user-profile-picture" />
+                        </div>
+                        <div id="post-userdata">
+                            <text id="username">{comment.commentedUser.userName}</text>
+                            <text id="comment">{comment.commentData}</text>
+                        </div>
                     </div>
-                    <div id="post-userdata">
-                        <text id="username">{comment.commentedUser.userName}</text>
-                        <text id="comment">{comment.commentData}</text>
-                    </div>
-                </div>
                 )
             })
         )
@@ -127,9 +132,32 @@ export default function Home() {
                                 <Typography id="modal-modal-title" variant="h6" component="h2">
                                     Comments
                                 </Typography>
-                                <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                                    {formattedComments}
+                                <Typography id="modal-modal-description" sx={{ mt: 2 }} >
+                                    <div id="show-comment-box">
+                                        {formattedComments}
+                                    </div>
                                 </Typography>
+                                <form class="msger-inputarea" id="comment-box">
+                                    <input type="text" class="msger-input" value={commentData} placeholder="Comment..." onChange={(e) => {
+                                        setCommentData(e.target.value);
+                                    }} />
+                                    <button type="submit" class="msger-send-btn" style={{ backgroundColor: "#022B57" }} onClick={(e) => {
+                                        e.preventDefault();
+                                        let data = {
+                                            userId: userData._id,
+                                            commentData: commentData
+                                        }
+                                        fetch(`http://localhost:3030/user/post/addlikesorcomments/${post._id}`, {
+                                            method: 'PUT',
+                                            body: JSON.stringify(data),
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                                'Authorization': `bearer ${localStorage.getItem('auth-token')}`
+                                            }
+                                        }).then(() => handleAllPosts());
+                                        setCommentData("");
+                                    }}>Send</button>
+                                </form>
                             </Box>
                         </Modal>
 
