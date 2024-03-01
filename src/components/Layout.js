@@ -6,7 +6,25 @@ import useGetMyChats from "../hooks/useGetMyChats";
 import { setChatUser } from '../features/chatUserSlice';
 import { myChatProfiles } from '../features/chatProfileSlice';
 import useGetUser from "../hooks/useGetUser";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import {
+    Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalFooter,
+    ModalBody,
+    ModalCloseButton,
+    Button,
+    Text,
+    useDisclosure,
+    FormControl,
+    FormLabel,
+    Input,
+    Box,
+    Image
+} from '@chakra-ui/react'
+import axios from "axios";
 
 export default function Layout() {
     const navigate = useNavigate();
@@ -17,6 +35,34 @@ export default function Layout() {
     const userData = useGetUser();
     const [chatUsers, setChatUsers] = useState([]);
     const [groupChatUser, setGroupChatUser] = useState([]);
+    const [newPostData,setNewPostData] = useState({});
+    const [postImg,setPostImg] = useState(null); 
+
+    const { isOpen, onOpen, onClose } = useDisclosure()
+
+    const initialRef = useRef(null)
+    const finalRef = useRef(null)
+
+    function handlePostImg(e){
+        setPostImg(URL.createObjectURL(e.target.files[0]));
+    }
+
+    function handleNewPost(e){
+        e.preventDefault();
+
+        const formData = new FormData();
+        formData.append('my-post',newPostData.img);
+        formData.append('postCaption',newPostData.caption);
+
+        axios.post('http://localhost:3030/user/post/createpost',formData,{
+            headers:{
+                'Content-Type':'multipart/form-data',
+                'Authorization':`bearer ${localStorage.getItem('auth-token')}`
+            }
+        }).then(()=>{
+            onClose();
+        })
+    }
 
     const formattedProfile = allChats.map((item, index) => {
         return (
@@ -60,17 +106,33 @@ export default function Layout() {
 
     return (
         <>
-            <div class="container">
+            <div class="layout-box">
                 <div class="row">
                     <div class="col-2 part">
                         <div className="sidebar-data">
                             <div className="icon"><i class="fa-solid fa-house"></i></div>
                             <div className="icon-name"><Link className="decoration" to={'/home'}><text>Home</text></Link></div>
                         </div>
+                        <div className="sidebar-data" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample" data-bs-theme="dark">
+                            <div className="icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+                            <div className="icon-name"><text>Search</text></div>
+
+                            <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+                                <div class="offcanvas-header">
+                                    <h5 class="offcanvas-title" id="offcanvasExampleLabel">Search</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                                </div>
+                                <div class="offcanvas-body">
+                                    <div>
+                                        <input id="input-box" type="text" placeholder="search" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div className="sidebar-data">
                             <div className="icon"><i class="fa-brands fa-facebook-messenger"></i></div>
 
-                            <div className="icon-name" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">Chats</div>
+                            <div className="icon-name" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions" data-bs-theme="dark">Chats</div>
 
                             <div class="offcanvas offcanvas-start" data-bs-scroll="true" tabindex="-1" id="offcanvasWithBothOptions" aria-labelledby="offcanvasWithBothOptionsLabel">
 
@@ -84,6 +146,50 @@ export default function Layout() {
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                        <div className="sidebar-data" onClick={onOpen}>
+                            <div className="icon"><i class="fa-solid fa-plus"></i></div>
+                            <div className="icon-name"><Link className="decoration" to={''}>Create</Link></div>
+
+                            <Modal
+                                initialFocusRef={initialRef}
+                                finalFocusRef={finalRef}
+                                isOpen={isOpen}
+                                onClose={onClose}
+                            >
+                                <ModalOverlay />
+                                <ModalContent>
+                                    <ModalHeader>Add Post</ModalHeader>
+                                    <ModalCloseButton />
+                                    <ModalBody pb={6}>
+                                        <Box boxSize={150}>
+                                            <Image src={postImg == null ? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKBH5DbCnCmwQCpcjv__106JSjG3U2oVNZRw&usqp=CAU" : postImg} alt='New post img'/>
+                                        </Box>
+                                        <form encType="multipart/form-data">
+                                        <FormControl>
+                                            <Button mb={5} mt={5} colorScheme='blue'><FormLabel>Add file</FormLabel></Button>
+                                            <Input type="file" onChange={(e)=>{
+                                                e.preventDefault();
+                                                handlePostImg(e);
+                                                setNewPostData({...newPostData,img:e.target.files[0]});
+                                            }}/>
+                                            <FormLabel>Caption</FormLabel>
+                                            <Input ref={initialRef} placeholder='Caption....' onChange={(e)=>{
+                                                e.preventDefault();
+                                                setNewPostData({...newPostData,caption:e.target.value});
+                                            }}/>
+                                        </FormControl>
+                                        </form>
+                                    </ModalBody>
+
+                                    <ModalFooter>
+                                        <Button colorScheme='blue' mr={3} onClick={(e)=>handleNewPost(e)}>
+                                            Post
+                                        </Button>
+                                        <Button onClick={onClose}>Cancel</Button>
+                                    </ModalFooter>
+                                </ModalContent>
+                            </Modal>
                         </div>
                         <div className="sidebar-data">
                             <div className="icon"><i class="fa-solid fa-user"></i></div>

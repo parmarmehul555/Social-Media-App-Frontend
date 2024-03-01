@@ -1,10 +1,14 @@
-*{
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-.editprofile-card{
+:root{
+    --body-bg: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.editprofile-card {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -13,11 +17,18 @@
     border: 2px solid white;
     border-radius: 10px;
     width: 35%;
-    box-shadow: -2px -2px 8px 5px rebeccapurple,
-                2px 2px 8px 5px rebeccapurple;
+    background: linear-gradient(-135deg, #c850c0, #4158d0);
+    /* box-shadow: -2px -2px 8px 5px rebeccapurple,
+        2px 2px 8px 5px rebeccapurple; */
 }
 
-#editprofile-card-data{
+#editprofile{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#editprofile-card-data {
     margin-top: 2vh;
 }
 
@@ -30,7 +41,7 @@
     overflow: hidden;
 }
 
-#user-img img{
+#user-img img {
     height: 150px;
     width: 150px;
     object-fit: cover;
@@ -40,7 +51,7 @@ input[type="file"] {
     display: none;
 }
 
-.input-data{
+.input-data {
     border: none;
     background-color: transparent;
     color: white;
@@ -50,7 +61,7 @@ input[type="file"] {
     transition: border 0.5s;
 }
 
-.input-data:focus{
+.input-data:focus {
     outline: none;
     border-color: #BB86FC;
     transform-origin: center;
@@ -73,13 +84,13 @@ input[type="file"] {
     border: 2px solid #725AC1;
     border-radius: 10px;
     box-shadow: inset 0 0 0 0 #725AC1;
-  }
-  
-  #save-btn:hover {
+}
+
+#save-btn:hover {
     color: white;
-    box-shadow: inset 0 -100px 0 0 #725AC1;
-  }
-  
-  #save-btn:active {
+    box-shadow: inset 0 -100px 0 0 #0546ed;
+}
+
+#save-btn:active {
     transform: scale(0.8);
-  }
+}

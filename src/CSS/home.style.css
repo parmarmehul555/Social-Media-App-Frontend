@@ -1,3 +1,11 @@
+:root{
+    --body-bg: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    --postbox-bg: #121212;
+    --border: 2px solid #ddd;
+    --left-msg-bg: #19376D;
+    --right-msg-bg: #576CBC;
+}
+
 *{
     margin: 0;
     padding: 0;
@@ -5,40 +13,54 @@
 }
 
 .post-box{
-    height: 100%;
+    height: 95%;
     width: 40%;
-    background-color: red;
+    background-color: var(--postbox-bg);
     overflow-y: scroll;
-    scroll-behavior: smooth;
+    scroll-snap-type: y mandatory;
+    color: white;
+    width: 55%;
+    border-radius: 10px;
+}
+
+.post-box::-webkit-scrollbar{
+    width: 0px;
+}
+
+#post{
+    padding: 2vh 2vh;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.374);
 }
 
 .user-header .user-img{
-    height: 35px;
-    width: 35px;
+    height: 45px;
+    width: 45px;
     overflow: hidden;
-    border-radius: 100%;
+    border-radius: 100%;;
 }
 
 .user-header .user-img img{
-    height: 35px;
-    width: 35px;
+    height: 45px;
+    width: 45px;
     object-fit: cover;
 }
 
 .user-header #username{
-    font-size: 18px;
+    font-size: 21px;
     margin-left: 1vh;
 }
 
 .post-data{
     height: 23rem;
     width: 100%;
+    border-radius: 10px;
 }
 
 .post-data img{
     height: 23rem;
     width: 100%;
     object-fit: cover;
+    border-radius: 10px;
 }
 
 .post-footer{

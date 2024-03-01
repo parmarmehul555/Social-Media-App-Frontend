@@ -11,30 +11,37 @@
 }
 
 
-.container {
+.layout-box {
     color: var(--textColor);
+    height: 90%;
+    width: 99%;
 }
 
 .col-2,.col{
     background-color: var(--backgroundColor);
+    border-left: 1px solid rgba(255, 255, 255, 0.374);
+}
+
+.part{
+    border-left: 2px solid white;
 }
 
 .col{
-    margin-left: 1vh;
+    /* margin-left: 1vh; */
 }
 
 .sidebar-data{
     display: flex;
     margin-top: 5vh;
     font-size: 1.3rem;
-    transition: 0.2s;
+    transition: 0.4s;
     align-items: normal;
-    border-radius: 100px;
     padding: 5px 15px;
 }
 
 .sidebar-data i {
     margin-right: 3vh;
+    transition: 0.4s;
 }
 
 .decoration{
@@ -45,6 +52,10 @@
 
 .sidebar-data:hover {
     cursor: pointer;
-    border-radius: 100px;
-    background-color: var(--hoverEffect);
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.374);
+}
+
+.sidebar-data:hover i {
+    scale: 1.2;
 }

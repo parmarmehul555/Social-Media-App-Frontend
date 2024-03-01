@@ -18,10 +18,8 @@ export default function Chat() {
     const [typing, setTyping] = useState(false);
     const wsURL = 'http://localhost:3030';
     const [chatUsers, setChatUsers] = useState([]);
-    console.log('chatUser',chatUser);
-    console.log('userData',userData);
+
     useEffect(() => {
-        
         if (!chatUser.isGroupChat) {
             chatUser.receivers.map((user) => {
                 if (user._id != userData._id) {
@@ -140,8 +138,6 @@ export default function Chat() {
         setTimeout(()=>setTyping(false),5000);
     }
 
-    console.log("beforre map ",chatUsers);
-
     const formattedChats = oldChats.map((chat) => {
         return (
             <>
@@ -166,8 +162,6 @@ export default function Chat() {
             </>
         )
     });
-
-    console.log("beforre return ",chatUsers);
 
     return (
         <>

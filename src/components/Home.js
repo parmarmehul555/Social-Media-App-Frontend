@@ -17,6 +17,13 @@ const style = {
     border: '2px solid #000',
     boxShadow: 24,
     p: 4,
+    height: '70%',
+    overflowY: 'scroll'
+};
+
+const formStyle = {
+    position:"sticky",
+    bottom:"0",
 };
 
 export default function Home() {
@@ -31,7 +38,7 @@ export default function Home() {
     const handleClose = () => setOpen(false);
 
     function handleAllPosts() {
-        fetch('http://localhost:3030/user/post/getallpost', {
+        fetch('http://localhost:3030/user/post/getposts', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -98,7 +105,7 @@ export default function Home() {
 
     const formattedPost = posts.map((post) => {
         return (
-            <>
+            <div id="post">
                 <div className="user-header">
                     <div className="user-img">
                         <img src={post.userId.userImg} alt="post-image" />
@@ -137,27 +144,29 @@ export default function Home() {
                                         {formattedComments}
                                     </div>
                                 </Typography>
-                                <form class="msger-inputarea" id="comment-box">
-                                    <input type="text" class="msger-input" value={commentData} placeholder="Comment..." onChange={(e) => {
-                                        setCommentData(e.target.value);
-                                    }} />
-                                    <button type="submit" class="msger-send-btn" style={{ backgroundColor: "#022B57" }} onClick={(e) => {
-                                        e.preventDefault();
-                                        let data = {
-                                            userId: userData._id,
-                                            commentData: commentData
-                                        }
-                                        fetch(`http://localhost:3030/user/post/addlikesorcomments/${post._id}`, {
-                                            method: 'PUT',
-                                            body: JSON.stringify(data),
-                                            headers: {
-                                                'Content-Type': 'application/json',
-                                                'Authorization': `bearer ${localStorage.getItem('auth-token')}`
+                                <Box sx={formStyle}>
+                                    <form class="msger-inputarea" id="comment-box">
+                                        <input type="text" class="msger-input" value={commentData} placeholder="Comment..." onChange={(e) => {
+                                            setCommentData(e.target.value);
+                                        }} />
+                                        <button type="submit" class="msger-send-btn" style={{ backgroundColor: "#022B57" }} onClick={(e) => {
+                                            e.preventDefault();
+                                            let data = {
+                                                userId: userData._id,
+                                                commentData: commentData
                                             }
-                                        }).then(() => handleAllPosts());
-                                        setCommentData("");
-                                    }}>Send</button>
-                                </form>
+                                            fetch(`http://localhost:3030/user/post/addlikesorcomments/${post._id}`, {
+                                                method: 'PUT',
+                                                body: JSON.stringify(data),
+                                                headers: {
+                                                    'Content-Type': 'application/json',
+                                                    'Authorization': `bearer ${localStorage.getItem('auth-token')}`
+                                                }
+                                            }).then(() => handleAllPosts());
+                                            setCommentData("");
+                                        }}>Send</button>
+                                    </form>
+                                </Box>
                             </Box>
                         </Modal>
 
@@ -174,7 +183,7 @@ export default function Home() {
                         <text>{post.postComments.length} comments</text>
                     </div>
                 </div>
-            </>
+            </div>
         )
     });
 
@@ -182,7 +191,6 @@ export default function Home() {
         <>
             <div className="post-box">
                 {formattedPost}
-
             </div>
         </>
     )

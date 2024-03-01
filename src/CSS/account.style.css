@@ -5,55 +5,58 @@
 }
 
 #accountdetails {
-    height: 500px;
-    /* background-color: rgba(255, 255, 255, 0.61); */
-    width: 400px;
+    height: 600px;
+    width: 600px;
     display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    flex-direction: column;
+    justify-content: start;
     border-radius: 10px;
+    flex-direction: column;
+    align-items: center;
+}
+
+#user-profile {
+    display: flex;
+    margin-bottom: 5vh;
 }
 
 #user-img {
-    margin-top: 10vh;
     height: 150px;
     width: 150px;
-    background-color: red;
     border-radius: 100%;
     overflow: hidden;
 }
 
-#user-img img{
+#user-img img {
     height: 150px;
     width: 150px;
     object-fit: cover;
 }
 
-#userProfileDetail{
+#userProfileDetail {
     margin-top: 2vh;
     display: flex;
     color: white;
 }
 
-.userprofile{
+.userprofile {
     margin-left: 2vh;
     text-align: center;
 }
 
-.userprofile .count{
+.userprofile .count {
     font-weight: 700;
 }
 
-.userprofile label{
+.userprofile label {
     font-size: 15px;
 }
 
 .userdetail {
     margin-top: 2vh;
-    border-bottom: 2px solid white;
     font-size: 25px;
     color: white;
+    display: flex;
+    align-items: center;
 }
 
 #edit-profile {
@@ -73,14 +76,64 @@
     border: 2px solid #725AC1;
     border-radius: 10px;
     box-shadow: inset 0 0 0 0 #725AC1;
-  }
-  
-  #edit-profile:hover {
+}
+
+#edit-profile:hover {
     color: white;
     box-shadow: inset 0 -100px 0 0 #725AC1;
-  }
-  
-  #edit-profile:active {
+}
+
+#edit-profile:active {
     transform: scale(0.8);
-  }
-  
+}
+
+#user-post {
+    height: 150px;
+    width: 150px;
+    overflow: hidden;
+}
+
+#user-post img {
+    height: 150px;
+    width: 150px;
+    object-fit: cover;
+}
+
+.userdetail text {
+    padding-left: 8px;
+}
+
+#input-box {
+    border: none;
+    border-radius: 5px;
+    width: 100%;
+    padding: 5px;
+}
+
+#input-box:focus {
+    outline: none;
+}
+
+#all-post {
+    height: 400px;
+    width: 500px;
+    display: flex;
+    justify-content: center;
+    overflow-y: scroll;
+}
+
+#all-post::-webkit-scrollbar {
+    width: 0;
+}
+
+.my-post-box-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#eclips {
+    margin-right: 4vh;
+    font-size: 20px;
+}
+

@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import useGetUser from '../hooks/useGetUser';
 
 export default function EditProfile() {
-    const [userData, setUserData] = useGetUser();
+    const userData = useGetUser();
     const [user, setUser] = useState({});
     const userOldData = useSelector((state) => state.user.user);
     const navigate = useNavigate();
@@ -35,7 +35,7 @@ export default function EditProfile() {
         <>
             <div className='editprofile-card'>
                 <h2>Edit Profile</h2>
-                <form encType='multipart/form-data' onSubmit={(e) => {
+                <form encType='multipart/form-data' id='editprofile' onSubmit={(e) => {
                     e.preventDefault();
                     handleNewData();
                 }}>
