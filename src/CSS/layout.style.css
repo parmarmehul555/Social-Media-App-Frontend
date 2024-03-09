@@ -59,3 +59,21 @@
 .sidebar-data:hover i {
     scale: 1.2;
 }
+
+.button-creat-grp{
+    display: flex;
+    justify-content: end;
+}
+
+#your-following{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#new-group-user-list{
+    display: flex;
+    margin-top: 1vh;
+    margin-bottom: 2vh;
+    align-items: center;
+}

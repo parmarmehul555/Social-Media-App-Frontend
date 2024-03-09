@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom'
 import '../CSS/account.style.css'
 import { useDispatch, useSelector } from 'react-redux'
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import useGetUser from '../hooks/useGetUser';
 import { userInfo } from '../features/userSlice';
 import {
@@ -18,6 +18,9 @@ import {
     Box,
     Image,
     SkeletonText,
+    FormControl,
+    FormLabel,
+    Input,
 } from '@chakra-ui/react'
 
 export default function Account() {
@@ -73,7 +76,7 @@ export default function Account() {
         })
     }
 
-    function getAllPost(){
+    function getAllPost() {
         fetch('http://localhost:3030/user/post/getallpost', {
             method: 'GET',
             headers: {
@@ -119,16 +122,18 @@ export default function Account() {
                     <ModalContent>
                         <div className='my-post-box-header'>
                             <ModalHeader>{userData.userName}</ModalHeader>
-                            {/* <ModalCloseButton   /> */}
                             <i id='eclips' class="fa-solid fa-ellipsis-vertical " onClick={showDropdown}></i>
                         </div>
                         <ModalBody>
                             <Box style={{ height: "380px" }}>
-                                {loading ? <SkeletonText startColor='pink.500' endColor='orange.500' mt='4' noOfLines={1} spacing='4' skeletonHeight='100%' /> : <Image src={postData.postURL} className='post-img' style={{ height: "100%", width: "100%" }} alt="Post Image" />}
+                                {loading ? <SkeletonText mt='4' noOfLines={5} spacing='4' skeletonHeight='100%' /> : <Image src={postData.postURL} className='post-img' style={{ height: "100%", width: "100%" }} alt="Post Image" />}
                             </Box>
+                            <Text>{postData.postCaption}</Text>
                         </ModalBody>
                         <ModalFooter>
-                            <Button onClick={onClose} colorScheme='red' onClick={() => handleDeletePost(post._id)}>Delete</Button>
+                            <Button onClick={onClose} colorScheme='red' me={2} onClick={() => handleDeletePost(post._id)}>Delete</Button>
+
+                            <Button colorScheme='green'>Edit</Button>
                         </ModalFooter>
                     </ModalContent>
                 </Modal>

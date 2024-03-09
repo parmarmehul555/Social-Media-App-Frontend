@@ -6,17 +6,20 @@
 
 #accountdetails {
     height: 600px;
-    width: 600px;
+    width: 100%;
     display: flex;
     justify-content: start;
     border-radius: 10px;
     flex-direction: column;
     align-items: center;
+    margin: 0 12vh;
 }
 
 #user-profile {
     display: flex;
     margin-bottom: 5vh;
+    width: 100%;
+    justify-content: center;
 }
 
 #user-img {
@@ -88,14 +91,14 @@
 }
 
 #user-post {
-    height: 150px;
-    width: 150px;
+    height:150px;
+    width:170px;
     overflow: hidden;
 }
 
 #user-post img {
-    height: 150px;
-    width: 150px;
+    height:150px;
+    width: 170x;
     object-fit: cover;
 }
 

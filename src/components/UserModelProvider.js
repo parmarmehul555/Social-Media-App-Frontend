@@ -85,7 +85,7 @@ export default function UserModelProvider(props) {
                                 </div>
                                 <div class="content">
                                     <div class="pass-link">
-                                        <a href="#">Forgot password?</a>
+                                        <Link to={'forgotpassword'}>Forgot password?</Link>
                                     </div>
                                 </div>
                                 <div class="field">

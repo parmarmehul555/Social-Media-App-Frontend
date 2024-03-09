@@ -22,9 +22,12 @@ import {
     FormLabel,
     Input,
     Box,
-    Image
+    Image,
+    Wrap,
+    WrapItem
 } from '@chakra-ui/react'
 import axios from "axios";
+import TextField from '@mui/material/TextField';
 
 export default function Layout() {
     const navigate = useNavigate();
@@ -35,33 +38,81 @@ export default function Layout() {
     const userData = useGetUser();
     const [chatUsers, setChatUsers] = useState([]);
     const [groupChatUser, setGroupChatUser] = useState([]);
-    const [newPostData,setNewPostData] = useState({});
-    const [postImg,setPostImg] = useState(null); 
+    const [newPostData, setNewPostData] = useState({});
+    const [postImg, setPostImg] = useState(null);
+    const [creatingGroup, setCreatingGroup] = useState(false);
+    const [myFollowings, setMyFollowings] = useState([]);
+    const [newGroup, setNewGroup] = useState({});
+    const [newGroupMembers, setNewGroupMembers] = useState([]);
 
     const { isOpen, onOpen, onClose } = useDisclosure()
 
     const initialRef = useRef(null)
     const finalRef = useRef(null)
 
-    function handlePostImg(e){
+    function handlePostImg(e) {
         setPostImg(URL.createObjectURL(e.target.files[0]));
     }
 
-    function handleNewPost(e){
+    function handleNewPost(e) {
         e.preventDefault();
 
         const formData = new FormData();
-        formData.append('my-post',newPostData.img);
-        formData.append('postCaption',newPostData.caption);
+        formData.append('my-post', newPostData.img);
+        formData.append('postCaption', newPostData.caption);
 
-        axios.post('http://localhost:3030/user/post/createpost',formData,{
-            headers:{
-                'Content-Type':'multipart/form-data',
-                'Authorization':`bearer ${localStorage.getItem('auth-token')}`
+        axios.post('http://localhost:3030/user/post/createpost', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                'Authorization': `bearer ${localStorage.getItem('auth-token')}`
             }
-        }).then(()=>{
+        }).then(() => {
             onClose();
         })
+    }
+
+    function handleMyFollowings() {
+        fetch('http://localhost:3030/user/getAllmyUsers', {
+            method: 'GET',
+            headers: {
+                'Authorization': `bearer ${localStorage.getItem('auth-token')}`
+            }
+        }).then((res) => {
+            if (res.ok) return res.json();
+            throw new Error("Can not get your following!!");
+        }).then((res) => {
+            setMyFollowings(res.following);
+        }).catch((error) => {
+            console.log("Can not get your following!!", error);
+        })
+    }
+
+    async function handleNewGroup(data) {
+        await fetch('http://localhost:3030/user/chat/creategroup', {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers: {
+                'Authorization': `bearer ${localStorage.getItem('auth-token')}`,
+                'Content-Type': 'Application/json'
+            }
+        })
+    }
+
+    function handleSelction(id) {
+        const element = document.getElementById(`${id}`);
+        element.classList.toggle('green-active');
+        if (element.classList.contains('green-active')) {
+            element.style.color = "green";
+            setNewGroupMembers([...newGroupMembers,id]);
+            console.log("From is members is ",id,newGroupMembers.length);
+        }
+        else {
+            element.style.color = "black";
+            console.log("from else members is ",newGroupMembers);
+            let data = newGroupMembers.filter((member)=>member != id ? member : '');
+            setNewGroupMembers([...data]);
+            console.log("===============", newGroupMembers);
+        }
     }
 
     const formattedProfile = allChats.map((item, index) => {
@@ -95,13 +146,48 @@ export default function Layout() {
                                     <text>{item.receivers[0].userName}</text>
                                 </> : <><div id='profile-picture'>
                                     <img src={item.groupImage} alt='profile-picture' />
-                                </div><text>{item.groupName}</text>
+                                </div><text>{item.name}</text>
                                 </>}
                             </>
                     }
                 </div>
             </>
         )
+    });
+
+    const fotmmattedFollowing = myFollowings.map((item, index) => {
+        return (
+            <div id="your-following">
+                <div key={index} id='new-group-user-list' onClick={() => {
+                    // const element = document.getElementById(`${item._id}`)
+                    // if (element.classList.contains('green-active')) {
+                    //     setNewGroupMembers([...newGroupMembers, item._id]);
+                    // }
+                    // else {
+                    //     let data = newGroupMembers.map((member, index) => {
+                    //         if (member == item._id) {
+                    //             data = newGroupMembers.splice(index, 1)
+                    //             // setNewGroupMembers([...newGroupMembers,item._id])
+                    //         }
+                    //     })
+                    //     setNewGroupMembers([data]);
+                    //     console.log("===============", newGroupMembers);
+                    // }
+                }}>
+                    <div id='profile-picture'>
+                        <img src={item.userImg} alt='profile-picture' />
+                    </div>
+                    <text>{item.userName}</text>
+                </div>
+                <div className="check-add-member" id={item._id} onClick={() => {
+                    handleSelction(item._id);
+                    // const element = document.getElementById(`${item._id}`)
+                }}>
+                    <i class="fa-solid fa-circle-check"></i>
+                </div>
+
+            </div>
+        );
     });
 
     return (
@@ -141,9 +227,31 @@ export default function Layout() {
                                     <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                                 </div>
                                 <div class="offcanvas-body">
-                                    <div id="my-chats">
+                                    <Wrap className="button-creat-grp">
+                                        <WrapItem>
+                                            <Button colorScheme='facebook' onClick={() => { setCreatingGroup(!creatingGroup); handleMyFollowings() }}>Create Group</Button>
+                                        </WrapItem>
+                                    </Wrap>
+                                    {!creatingGroup ? <div id="my-chats">
                                         {formattedProfile}
-                                    </div>
+                                    </div> : <div>
+                                        <Input variant='outline' placeholder='Group Name' onChange={(e) => {
+                                            setNewGroup({ ...newGroup, groupName: e.target.value });
+                                        }} />
+                                        {fotmmattedFollowing}
+                                        <Wrap>
+                                            <WrapItem>
+                                                <Button colorScheme='teal' onClick={async (e) => {
+                                                    let data = JSON.stringify(newGroupMembers)
+                                                    setNewGroup({ ...newGroup, groupMembers: data });
+                                                    await handleNewGroup(newGroup);
+                                                }}>Create</Button>
+                                                <Button colorScheme='red' ms={2} onClick={(e) => {
+                                                    setCreatingGroup(false);
+                                                }}>Cancel</Button>
+                                            </WrapItem>
+                                        </Wrap>
+                                    </div>}
                                 </div>
                             </div>
                         </div>
@@ -163,27 +271,27 @@ export default function Layout() {
                                     <ModalCloseButton />
                                     <ModalBody pb={6}>
                                         <Box boxSize={150}>
-                                            <Image src={postImg == null ? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKBH5DbCnCmwQCpcjv__106JSjG3U2oVNZRw&usqp=CAU" : postImg} alt='New post img'/>
+                                            <Image src={postImg == null ? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKBH5DbCnCmwQCpcjv__106JSjG3U2oVNZRw&usqp=CAU" : postImg} alt='New post img' />
                                         </Box>
                                         <form encType="multipart/form-data">
-                                        <FormControl>
-                                            <Button mb={5} mt={5} colorScheme='blue'><FormLabel>Add file</FormLabel></Button>
-                                            <Input type="file" onChange={(e)=>{
-                                                e.preventDefault();
-                                                handlePostImg(e);
-                                                setNewPostData({...newPostData,img:e.target.files[0]});
-                                            }}/>
-                                            <FormLabel>Caption</FormLabel>
-                                            <Input ref={initialRef} placeholder='Caption....' onChange={(e)=>{
-                                                e.preventDefault();
-                                                setNewPostData({...newPostData,caption:e.target.value});
-                                            }}/>
-                                        </FormControl>
+                                            <FormControl>
+                                                <Button mb={5} mt={5} colorScheme='blue'><FormLabel>Add file</FormLabel></Button>
+                                                <Input type="file" onChange={(e) => {
+                                                    e.preventDefault();
+                                                    handlePostImg(e);
+                                                    setNewPostData({ ...newPostData, img: e.target.files[0] });
+                                                }} />
+                                                <FormLabel>Caption</FormLabel>
+                                                <Input ref={initialRef} placeholder='Caption....' onChange={(e) => {
+                                                    e.preventDefault();
+                                                    setNewPostData({ ...newPostData, caption: e.target.value });
+                                                }} />
+                                            </FormControl>
                                         </form>
                                     </ModalBody>
 
                                     <ModalFooter>
-                                        <Button colorScheme='blue' mr={3} onClick={(e)=>handleNewPost(e)}>
+                                        <Button colorScheme='blue' mr={3} onClick={(e) => handleNewPost(e)}>
                                             Post
                                         </Button>
                                         <Button onClick={onClose}>Cancel</Button>
@@ -197,7 +305,7 @@ export default function Layout() {
                         </div>
                         <div className="sidebar-data">
                             <div className="icon"><i class="fa-solid fa-bars"></i></div>
-                            <div className="icon-name"><text>Setting</text></div>
+                            <div className="icon-name"><Link to={'setting'}><text>Setting</text></Link></div>
                         </div>
                         <div className="sidebar-data" onClick={() => {
                             localStorage.clear();
