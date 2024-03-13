@@ -47,7 +47,7 @@
     object-fit: cover;
 }
 
-input[type="file"] {
+#user-profile-picture{
     display: none;
 }
 

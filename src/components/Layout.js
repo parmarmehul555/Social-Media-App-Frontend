@@ -6,7 +6,7 @@ import useGetMyChats from "../hooks/useGetMyChats";
 import { setChatUser } from '../features/chatUserSlice';
 import { myChatProfiles } from '../features/chatProfileSlice';
 import useGetUser from "../hooks/useGetUser";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
     Modal,
     ModalOverlay,
@@ -44,6 +44,11 @@ export default function Layout() {
     const [myFollowings, setMyFollowings] = useState([]);
     const [newGroup, setNewGroup] = useState({});
     const [newGroupMembers, setNewGroupMembers] = useState([]);
+    const [newGroupImg, setNewGroupImg] = useState(null);
+    const [gropEditing, setGroupEditing] = useState(false);
+    const [group, setGroup] = useState({});
+    const [groupUpdate, setGroupUpdate] = useState({});
+    const [myGroupMembers, setMyGroupMembers] = useState([]);
 
     const { isOpen, onOpen, onClose } = useDisclosure()
 
@@ -52,6 +57,10 @@ export default function Layout() {
 
     function handlePostImg(e) {
         setPostImg(URL.createObjectURL(e.target.files[0]));
+    }
+
+    function handleCurrentGroupImg(e) {
+        setNewGroupImg(URL.createObjectURL(e.target.files[0]));
     }
 
     function handleNewPost(e) {
@@ -88,13 +97,48 @@ export default function Layout() {
     }
 
     async function handleNewGroup(data) {
-        await fetch('http://localhost:3030/user/chat/creategroup', {
-            method: 'POST',
-            body: JSON.stringify(data),
-            headers: {
-                'Authorization': `bearer ${localStorage.getItem('auth-token')}`,
-                'Content-Type': 'Application/json'
+        try {
+            const formData = new FormData();
+            formData.append('groupName', data.name);
+            formData.append('groupMembers', data.groupMembers);
+            if (data.groupImage) {
+                formData.append('group-img', data.groupImage);
             }
+
+            await axios.post('http://localhost:3030/user/chat/creategroup',
+                formData,
+                {
+                    headers: {
+                        'Authorization': `bearer ${localStorage.getItem('auth-token')}`,
+                        'Content-Type': 'multipart/form-data'
+                    }
+                }
+            ).then(() => {
+                setCreatingGroup(false);
+                setGroupEditing(false);
+            }).catch((error) => {
+                console.log(error);
+            })
+        } catch (error) {
+            console.log("Can not create group ==>> ", error.message);
+        }
+    }
+
+    async function handleGroupEditing(data) {
+        const formData = new FormData();
+        formData.append('groupNewName', data.name);
+        if (data.groupImage) {
+            formData.append('group-profile-picture', data.groupImg);
+        }
+
+        await axios.put(`http://localhost:3030/user/chat/updategroup/${groupUpdate._id}`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                'Authorization': `bearer ${localStorage.getItem('auth-token')}`
+            }
+        }).then(() => {
+            setCreatingGroup(false);
+            setGroupEditing(false);
         })
     }
 
@@ -103,16 +147,29 @@ export default function Layout() {
         element.classList.toggle('green-active');
         if (element.classList.contains('green-active')) {
             element.style.color = "green";
-            setNewGroupMembers([...newGroupMembers,id]);
-            console.log("From is members is ",id,newGroupMembers.length);
         }
         else {
             element.style.color = "black";
-            console.log("from else members is ",newGroupMembers);
-            let data = newGroupMembers.filter((member)=>member != id ? member : '');
-            setNewGroupMembers([...data]);
-            console.log("===============", newGroupMembers);
         }
+    }
+
+    function handleMyGroupMembers(id) {
+        fetch(`http://localhost:3030/user/chat/getallmembers/${id}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `bearer ${localStorage.getItem('auth-token')}`,
+            }
+        })
+            .then((res) => {
+                if (res.ok) return res.json();
+                throw new Error("Can not get your members of group!!");
+            })
+            .then((res) => {
+                setMyGroupMembers(res.receivers);
+            })
+            .catch((error) => {
+                console.log("Can not get members :: ", error);
+            })
     }
 
     const formattedProfile = allChats.map((item, index) => {
@@ -144,10 +201,22 @@ export default function Layout() {
                                     <img src={item.receivers[0].userImg} alt='profile-picture' />
                                 </div>
                                     <text>{item.receivers[0].userName}</text>
-                                </> : <><div id='profile-picture'>
-                                    <img src={item.groupImage} alt='profile-picture' />
-                                </div><text>{item.name}</text>
-                                </>}
+                                </> :
+                                    <div id="group">
+                                        <div id="group-detail"><div id='profile-picture'>
+                                            <img src={item.groupImage} alt='profile-picture' />
+                                        </div>
+                                            <text>{item.name}</text>
+                                        </div>
+                                        <div onClick={() => {
+                                            setGroupEditing(true);
+                                            setGroupUpdate(item);
+                                            localStorage.setItem('chatId',item._id);
+                                            handleMyGroupMembers(item._id);
+                                        }}>
+                                            <i class="fa-solid fa-pen-to-square"></i>
+                                        </div>
+                                    </div>}
                             </>
                     }
                 </div>
@@ -157,38 +226,59 @@ export default function Layout() {
 
     const fotmmattedFollowing = myFollowings.map((item, index) => {
         return (
-            <div id="your-following">
-                <div key={index} id='new-group-user-list' onClick={() => {
-                    // const element = document.getElementById(`${item._id}`)
-                    // if (element.classList.contains('green-active')) {
-                    //     setNewGroupMembers([...newGroupMembers, item._id]);
-                    // }
-                    // else {
-                    //     let data = newGroupMembers.map((member, index) => {
-                    //         if (member == item._id) {
-                    //             data = newGroupMembers.splice(index, 1)
-                    //             // setNewGroupMembers([...newGroupMembers,item._id])
-                    //         }
-                    //     })
-                    //     setNewGroupMembers([data]);
-                    //     console.log("===============", newGroupMembers);
-                    // }
-                }}>
+            <div id="your-following" onClick={() => {
+                handleSelction(item._id);
+                const element = document.getElementById(`${item._id}`);
+                if (element.classList.contains('green-active')) {
+                    setNewGroupMembers([...newGroupMembers, item._id]);
+                }
+                else {
+                    let data = newGroupMembers.filter((member) => member != item._id ? member : '');
+                    setNewGroupMembers([...data]);
+                }
+            }}>
+                <div key={index} id='new-group-user-list'>
                     <div id='profile-picture'>
                         <img src={item.userImg} alt='profile-picture' />
                     </div>
                     <text>{item.userName}</text>
                 </div>
-                <div className="check-add-member" id={item._id} onClick={() => {
-                    handleSelction(item._id);
-                    // const element = document.getElementById(`${item._id}`)
-                }}>
+                <div className="check-add-member" id={item._id}>
                     <i class="fa-solid fa-circle-check"></i>
                 </div>
 
             </div>
         );
     });
+
+    const formattedGroupMembers = myGroupMembers.map((member, index) => {
+        return (
+            <>
+                <div id="your-following">
+                    <div key={index} id='new-group-user-list'>
+                        <div id='profile-picture'>
+                            <img src={member.userImg} alt='profile-picture' />
+                        </div>
+                        <text>{member.userName}</text>
+                    </div>
+                    <div className="check-add-member" id={member._id} onClick={async ()=>{
+                        await fetch(`http://localhost:3030/user/chat/removegroupmember/${member._id}-${localStorage.getItem('chatId')}`,{
+                            method:'DELETE',
+                            headers:{
+                                'Authorization':`bearer ${localStorage.getItem('auth-token')}`,
+                                'Content-Type':'application/json'
+                            }
+                        }).then(()=>{
+                            setMyGroupMembers(myGroupMembers.filter((user)=>user._id !== member._id ? user : ''));
+                        })
+                    }}>
+                        <i class="fa-solid fa-trash"></i>
+                    </div>
+
+                </div>
+            </>
+        );
+    })
 
     return (
         <>
@@ -227,30 +317,47 @@ export default function Layout() {
                                     <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                                 </div>
                                 <div class="offcanvas-body">
-                                    <Wrap className="button-creat-grp">
+                                    {!creatingGroup ? <Wrap className="button-creat-grp">
                                         <WrapItem>
                                             <Button colorScheme='facebook' onClick={() => { setCreatingGroup(!creatingGroup); handleMyFollowings() }}>Create Group</Button>
                                         </WrapItem>
-                                    </Wrap>
-                                    {!creatingGroup ? <div id="my-chats">
+                                    </Wrap> : ''}
+                                    {!creatingGroup && !gropEditing ? <div id="my-chats">
                                         {formattedProfile}
                                     </div> : <div>
-                                        <Input variant='outline' placeholder='Group Name' onChange={(e) => {
+                                        <div id="groupImg">
+                                            <img src={gropEditing ? groupUpdate.groupImage : !newGroupImg ? "https://res.cloudinary.com/de0punalk/image/upload/v1707397450/paslibbfdsgtyxe5rqhu.png" : newGroupImg} />
+                                        </div>
+                                        <form encType="multipart/form-data">
+                                            <input type="file" id="group-photo" name="" onChange={(e) => {
+                                                handleCurrentGroupImg(e);
+                                                setNewGroup({
+                                                    ...newGroup, groupImage: e.target.files[0]
+                                                });
+                                                setGroupUpdate({ ...groupUpdate, groupImg: e.target.files[0] });
+                                            }} /></form>
+                                        <Input variant='outline' placeholder='Group Name' value={groupUpdate.name} onChange={(e) => {
+                                            console.log(e.target.value);
                                             setNewGroup({ ...newGroup, groupName: e.target.value });
+                                            setGroupUpdate({ ...groupUpdate, name: e.target.value });
                                         }} />
                                         {fotmmattedFollowing}
                                         <Wrap>
                                             <WrapItem>
-                                                <Button colorScheme='teal' onClick={async (e) => {
-                                                    let data = JSON.stringify(newGroupMembers)
+                                                {creatingGroup ? <Button colorScheme='teal' onClick={async (e) => {
+                                                    let data = JSON.stringify(newGroupMembers);
                                                     setNewGroup({ ...newGroup, groupMembers: data });
+                                                    console.log(newGroup);
                                                     await handleNewGroup(newGroup);
-                                                }}>Create</Button>
+                                                }}>Create</Button> :
+                                                    <Button colorScheme="green" onClick={(e) => { handleGroupEditing(groupUpdate); }}>Save Changes</Button>}
                                                 <Button colorScheme='red' ms={2} onClick={(e) => {
                                                     setCreatingGroup(false);
+                                                    setGroupEditing(false);
                                                 }}>Cancel</Button>
                                             </WrapItem>
                                         </Wrap>
+                                        {gropEditing && formattedGroupMembers}
                                     </div>}
                                 </div>
                             </div>

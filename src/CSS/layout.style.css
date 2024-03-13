@@ -7,7 +7,7 @@
 :root {
     --textColor: #fff;
     --backgroundColor: #121212;
-    --hoverEffect:#BB86FC;
+    --hoverEffect: #BB86FC;
 }
 
 
@@ -17,20 +17,21 @@
     width: 99%;
 }
 
-.col-2,.col{
+.col-2,
+.col {
     background-color: var(--backgroundColor);
     border-left: 1px solid rgba(255, 255, 255, 0.374);
 }
 
-.part{
+.part {
     border-left: 2px solid white;
 }
 
-.col{
+.col {
     /* margin-left: 1vh; */
 }
 
-.sidebar-data{
+.sidebar-data {
     display: flex;
     margin-top: 5vh;
     font-size: 1.3rem;
@@ -44,7 +45,7 @@
     transition: 0.4s;
 }
 
-.decoration{
+.decoration {
     text-decoration: none;
     color: white;
 }
@@ -60,20 +61,105 @@
     scale: 1.2;
 }
 
-.button-creat-grp{
+.button-creat-grp {
     display: flex;
     justify-content: end;
 }
 
-#your-following{
+#your-following {
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
 
-#new-group-user-list{
+#new-group-user-list {
     display: flex;
     margin-top: 1vh;
     margin-bottom: 2vh;
     align-items: center;
+}
+
+#groupImg {
+    height: 130px;
+    width: 130px;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+#groupImg img {
+    height: 130px;
+    width: 130px;
+    object-fit: cover;
+    border-radius: 100%;
+}
+
+/* Input type file button stying.. */
+#group-photo{
+    position: relative;
+}
+
+#group-photo::file-selector-button {
+    width: 136px;
+    color: transparent;
+}
+
+/* Faked label styles and icon */
+#group-photo::before {
+    position: absolute;
+    pointer-events: none;
+    top: 10px;
+    left: 16px;
+    height: 20px;
+    width: 20px;
+    content: "";
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%230964B0'%3E%3Cpath d='M18 15v3H6v-3H4v3c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-3h-2zM7 9l1.41 1.41L11 7.83V16h2V7.83l2.59 2.58L17 9l-5-5-5 5z'/%3E%3C/svg%3E");
+}
+
+#group-photo::after {
+    position: absolute;
+    pointer-events: none;
+    top: 11px;
+    left: 40px;
+    color: #0964b0;
+    content: "Upload File";
+}
+
+/* ------- From Step 1 ------- */
+
+/* file upload button */
+#group-photo::file-selector-button {
+    border-radius: 4px;
+    padding: 0 16px;
+    height: 40px;
+    cursor: pointer;
+    background-color: white;
+    border: 1px solid rgba(0, 0, 0, 0.16);
+    box-shadow: 0px 1px 0px rgba(0, 0, 0, 0.05);
+    margin-right: 16px;
+    transition: background-color 200ms;
+    width: 40%;
+    text-align: center;
+    margin-bottom: 1vh;
+}
+
+/* file upload button hover state */
+#group-photo::file-selector-button:hover {
+    background-color: #f3f4f6;
+}
+
+/* file upload button active state */
+#group-photo::file-selector-button:active {
+    background-color: #e5e7eb;
+}
+
+#group{
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+}
+
+#group-detail{
+    display: flex;
 }
