@@ -140,3 +140,35 @@
     font-size: 20px;
 }
 
+#following-box{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2vh;
+}
+
+.following-user-details{
+    display: flex;
+    align-items: center;
+}
+
+.following-user-details text{
+    margin-left: 1vh;
+}
+
+#following-user-img{
+    height: 40px;
+    width: 40px;
+    overflow: hidden;
+    border-radius: 100%;
+}
+
+#following-user-img img{
+    height: 40px;
+    width: 40px;
+    border-radius: 100%;
+}
+
+.followBtn{
+    display: none;
+}

@@ -284,7 +284,7 @@ export default function Layout() {
         <>
             <div class="layout-box">
                 <div class="row">
-                    <div class="col-2 part">
+                    {!localStorage.getItem('admin-token') && localStorage.getItem('auth-token') ? <div class="col-2 part">
                         <div className="sidebar-data">
                             <div className="icon"><i class="fa-solid fa-house"></i></div>
                             <div className="icon-name"><Link className="decoration" to={'/home'}><text>Home</text></Link></div>
@@ -420,8 +420,8 @@ export default function Layout() {
                         }}>
                             <h4 style={{ color: "red" }}>Logout</h4>
                         </div>
-                    </div>
-                    <div class="col" style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+                    </div>:''}
+                    <div class="col" style={{height: "100vh" }}>
                         <Outlet />
                     </div>
                 </div>
@@ -429,3 +429,5 @@ export default function Layout() {
         </>
     )
 }
+
+// display: "flex", justifyContent: "center", alignItems: "center", 

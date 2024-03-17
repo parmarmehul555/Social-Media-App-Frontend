@@ -1,0 +1,27 @@
+.postBox{
+    /* position: absolute; */
+    top: 0;
+    /* left: 0; */
+    width: 80%;
+}
+
+.postCard{
+    height: 60vh;
+    overflow: auto;
+}
+
+.card{
+    margin-top: 2vh;
+    height: 60vh;
+}
+
+.card img{
+    object-fit: cover;
+    height: 40vh;
+}
+
+#post-details{
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+}

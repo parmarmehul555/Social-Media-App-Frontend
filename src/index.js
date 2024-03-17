@@ -14,6 +14,9 @@ import { MyChats } from './components/MyChats';
 import { ChakraProvider } from '@chakra-ui/react';
 import ForgotPassword from './components/ForgortPassword';
 import Setting from './components/Setting';
+import AdminModelProvider from './components/AdminModelProvider';
+import Dashboard from './components/Dashboard';
+import AdminUserProfile from './components/AdminUserProfile';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -31,6 +34,10 @@ root.render(
             <Route path='/chat/:chatId' element={<Chat />} />
             <Route path='/login/forgotpassword' element={<ForgotPassword />} />
             <Route path='/setting' element={<Setting />} />
+            <Route path='/admin/login' element={<AdminModelProvider isLogin="true" />}></Route>
+            <Route path='/admin/signup' element={<AdminModelProvider />}></Route>
+            <Route path='/admin/dashboard' element={<Dashboard/>}></Route>
+            <Route path='/admin/user/:userId' element={<AdminUserProfile/>}></Route>
           </Route>
         </Routes>
       </Provider>

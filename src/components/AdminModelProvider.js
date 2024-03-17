@@ -1,15 +1,14 @@
-import { Link, Navigate, useNavigate } from 'react-router-dom'
-import '../CSS/userModel.style.css'
-import { useState } from 'react';
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
-export default function UserModelProvider(props) {
-    const [user, setUser] = useState({});
+export default function AdminModelProvider(props) {
+    const [admin, setAdmin] = useState({});
     const navigate = useNavigate();
 
     function login() {
-        fetch('http://localhost:3030/user/login', {
+        fetch('http://localhost:3030/admin/login', {
             method: 'POST',
-            body: JSON.stringify(user),
+            body: JSON.stringify(admin),
             headers: {
                 'Content-Type': 'application/json'
             }
@@ -18,14 +17,11 @@ export default function UserModelProvider(props) {
                 if (res.ok) {
                     return res.json();
                 }
-                console.log("Invalid user");
-                // const msg = document.getElementById('wrong-input-msg');
-                // msg.style.display = "block"
+                console.log("Invalid admin");
             })
             .then((res) => {
-                localStorage.setItem('auth-token', res.token);
-                setUser(res);
-                navigate('/home')
+                localStorage.setItem('admin-token', res.token);
+                navigate('/admin/dashboard')
             })
             .catch((error) => {
                 console.log("Can not login :: ", error);
@@ -33,9 +29,9 @@ export default function UserModelProvider(props) {
     }
 
     function signup() {
-        fetch('http://localhost:3030/user/signup', {
+        fetch('http://localhost:3030/admin/signup', {
             method: 'POST',
-            body: JSON.stringify(user),
+            body: JSON.stringify(admin),
             headers: {
                 'Content-Type': 'application/json'
             }
@@ -44,11 +40,9 @@ export default function UserModelProvider(props) {
                 if (res.ok) {
                     return res.json();
                 }
-                // document.getElementById('wrong-input-signup-msg').style.display = "block";
             })
             .then((res) => {
                 localStorage.setItem('auth-token', res.token);
-                setUser(res);
                 navigate('/login')
             })
             .catch((error) => {
@@ -62,21 +56,22 @@ export default function UserModelProvider(props) {
                     <>
                         <div class="wrapper">
                             <div class="title">
-                                Login
+                                Admin Login
                             </div>
                             <form onSubmit={(e) => {
                                 e.preventDefault();
+                                console.log(admin);
                                 login();
                             }}>
                                 <div class="field">
                                     <input type="text" required onChange={(e) => {
-                                        setUser({ ...user, email: e.target.value });
+                                        setAdmin({ ...admin, adminEmail: e.target.value });
                                     }} />
                                     <label>Email</label>
                                 </div>
                                 <div class="field">
                                     <input type="password" required onChange={(e) => {
-                                        setUser({ ...user, password: e.target.value });
+                                        setAdmin({ ...admin, adminPassword: e.target.value });
                                     }} />
                                     <label>Password</label>
                                 </div>
@@ -89,7 +84,7 @@ export default function UserModelProvider(props) {
                                     <input type="submit" value="Login" />
                                 </div>
                                 <div class="signup-link">
-                                    Don't have an account? <Link to={'/signup'}>Signup</Link>
+                                    Don't have an account? <Link to={'/admin/signup'}>Signup</Link>
                                 </div>
                             </form>
                         </div>
@@ -98,7 +93,7 @@ export default function UserModelProvider(props) {
                     <>
                         <div class="wrapper">
                             <div class="title">
-                                Signup
+                                Admin Signup
                             </div>
                             <form onSubmit={(e) => {
                                 e.preventDefault();
@@ -106,28 +101,28 @@ export default function UserModelProvider(props) {
                             }}>
                                 <text id='wrong-input-msg'>Invalid email or password</text>
                                 <div class="field">
-                                    <input type="text" required onChange={(e)=>{
-                                        setUser({...user,userName:e.target.value})
-                                    }}/>
-                                    <label>User Name</label>
+                                    <input type="text" required onChange={(e) => {
+                                        setAdmin({ ...admin, adminName: e.target.value })
+                                    }} />
+                                    <label>Admin Name</label>
                                 </div>
                                 <div class="field">
-                                    <input type="text" required onChange={(e)=>{
-                                        setUser({...user,email:e.target.value})
-                                    }}/>
+                                    <input type="text" required onChange={(e) => {
+                                        setAdmin({ ...admin, adminEmail: e.target.value })
+                                    }} />
                                     <label>Email</label>
                                 </div>
                                 <div class="field">
-                                    <input type="password" required onChange={(e)=>{
-                                        setUser({...user,password:e.target.value})
-                                    }}/>
+                                    <input type="password" required onChange={(e) => {
+                                        setAdmin({ ...admin, adminPassword: e.target.value })
+                                    }} />
                                     <label>Password</label>
                                 </div>
                                 <div class="field">
                                     <input type="submit" value="Signup" />
                                 </div>
                                 <div class="signup-link">
-                                    Already have an account? <Link to={'/login'}>Login</Link>
+                                    Already have an account? <Link to={'/admin/login'}>Login</Link>
                                 </div>
                             </form>
                         </div>
