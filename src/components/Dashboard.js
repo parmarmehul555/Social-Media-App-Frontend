@@ -39,26 +39,29 @@ export default function Dashboard() {
 
     const formatedUsers = users.map((user, index) => {
         return (
-            <li class="table-row" style={{ textAlign: "center" }}>
-                <div class="col col-3" data-label="Job Id">{user?.userName}</div>
-                <div class="col col-3" data-label="Customer Name">{user?.followingCount}</div>
-                <div class="col col-4" data-label="Amount">{user?.followerCount}</div>
-                <div class="col col-4" data-label="Payment Status">
-                    <Link to={`/admin/user/${user._id}`}><i class="fa-solid fa-circle-info" style={{ fontSize: "18px", marginRight: "15px" }}></i></Link>
-                    <i class="fa-solid fa-trash" id='delete-btn' style={{ fontSize: "18px" }} onClick={() => { handleDelete(user._id) }}></i>
-                </div>
-            </li >
+            <>
+                <Link to={`/admin/user/${user._id}`}>
+                    <li class="table-row" style={{ textAlign: "center" }}>
+                        <div class="col col-3" data-label="Job Id">{user?.userName}</div>
+                        <div class="col col-3" data-label="Customer Name">{user?.followingCount}</div>
+                        <div class="col col-4" data-label="Amount">{user?.followerCount}</div>
+                        <div class="col col-4" data-label="Payment Status">
+                            <i class="fa-solid fa-trash text text-danger" id='delete-btn' style={{ fontSize: "18px" }} onClick={() => { handleDelete(user._id) }}></i>
+                        </div>
+                    </li >
+                </Link>
+            </>
         )
     })
 
     return (
         <>
             <div class="container">
-                <div style={{display:'flex',justifyContent:'space-evenly',alignItems:'center'}}>
+                <div style={{ display: 'flex', justifyContent: 'space-evenly', alignItems: 'center' }}>
                     <h2>Users of App</h2>
-                    <button className='btn btn-danger'onClick={()=>{
+                    <button className='btn btn-danger' onClick={() => {
                         localStorage.removeItem('admin-token');
-                        navigate( '/admin/login');
+                        navigate('/admin/login');
                     }}>Logout</button>
                 </div>
                 <ul class="responsive-table">
@@ -66,7 +69,7 @@ export default function Dashboard() {
                         <div class="col col-3">User Name</div>
                         <div class="col col-3">Following</div>
                         <div class="col col-4">Followers</div>
-                        <div class="col col-4">Options</div>
+                        <div class="col col-4">Delete</div>
                     </li>
                     {formatedUsers}
                 </ul>

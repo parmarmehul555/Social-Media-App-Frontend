@@ -1,23 +1,33 @@
+#user-box{
+    display: grid;
+    place-items: center;
+}
+
 .postBox{
-    /* position: absolute; */
     top: 0;
-    /* left: 0; */
     width: 80%;
 }
 
 .postCard{
     height: 60vh;
     overflow: auto;
+    width: 80%;
+}
+
+.postCard::-webkit-scrollbar{
+    width: 0;
 }
 
 .card{
     margin-top: 2vh;
-    height: 60vh;
+    width: 100%;
+    height: 50vh;
 }
 
 .card img{
+    width: 100%;
     object-fit: cover;
-    height: 40vh;
+    height: 30vh;
 }
 
 #post-details{

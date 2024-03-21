@@ -53,7 +53,7 @@ export default function AdminModelProvider(props) {
         <>
             {
                 props.isLogin ?
-                    <>
+                    <div id="login-box">
                         <div class="wrapper">
                             <div class="title">
                                 Admin Login
@@ -88,9 +88,9 @@ export default function AdminModelProvider(props) {
                                 </div>
                             </form>
                         </div>
-                    </>
+                    </div>
                     :
-                    <>
+                    <div id="signup-box">
                         <div class="wrapper">
                             <div class="title">
                                 Admin Signup
@@ -126,7 +126,7 @@ export default function AdminModelProvider(props) {
                                 </div>
                             </form>
                         </div>
-                    </>
+                    </div>
             }
         </>
     )

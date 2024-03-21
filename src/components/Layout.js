@@ -1,4 +1,4 @@
-import { Link, Navigate, Outlet, useNavigate } from "react-router-dom";
+import { Link, Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
 import '../CSS/layout.style.css';
 import UserModelProvider from "./UserModelProvider";
 import { useDispatch, useSelector } from "react-redux";
@@ -49,6 +49,16 @@ export default function Layout() {
     const [group, setGroup] = useState({});
     const [groupUpdate, setGroupUpdate] = useState({});
     const [myGroupMembers, setMyGroupMembers] = useState([]);
+    const path = useLocation();
+
+    window.addEventListener('load',()=>{
+        if(localStorage.getItem('auth-token')){
+            navigate('/home');
+        }
+        else{
+            navigate('/login');
+        }
+    })
 
     const { isOpen, onOpen, onClose } = useDisclosure()
 
@@ -77,6 +87,7 @@ export default function Layout() {
             }
         }).then(() => {
             onClose();
+            setPostImg(null);
         })
     }
 
@@ -289,28 +300,12 @@ export default function Layout() {
                             <div className="icon"><i class="fa-solid fa-house"></i></div>
                             <div className="icon-name"><Link className="decoration" to={'/home'}><text>Home</text></Link></div>
                         </div>
-                        <div className="sidebar-data" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample" data-bs-theme="dark">
-                            <div className="icon"><i class="fa-solid fa-magnifying-glass"></i></div>
-                            <div className="icon-name"><text>Search</text></div>
-
-                            <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
-                                <div class="offcanvas-header">
-                                    <h5 class="offcanvas-title" id="offcanvasExampleLabel">Search</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-                                </div>
-                                <div class="offcanvas-body">
-                                    <div>
-                                        <input id="input-box" type="text" placeholder="search" />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                         <div className="sidebar-data">
                             <div className="icon"><i class="fa-brands fa-facebook-messenger"></i></div>
 
-                            <div className="icon-name" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions" data-bs-theme="dark">Chats</div>
+                            <div className="icon-name" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">Chats</div>
 
-                            <div class="offcanvas offcanvas-start" data-bs-scroll="true" tabindex="-1" id="offcanvasWithBothOptions" aria-labelledby="offcanvasWithBothOptionsLabel">
+                            <div class="offcanvas offcanvas-start" data-bs-scroll="true" tabindex="-1" id="offcanvasWithBothOptions" aria-labelledby="offcanvasWithBothOptionsLabel"  data-bs-theme="dark">
 
                                 <div class="offcanvas-header">
                                     <h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel">Chats</h5>

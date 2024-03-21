@@ -59,7 +59,7 @@ export default function UserModelProvider(props) {
         <>
             {
                 props.isLogin ?
-                    <>
+                    <div id='login-box'>
                         <div class="wrapper">
                             <div class="title">
                                 Login
@@ -93,9 +93,9 @@ export default function UserModelProvider(props) {
                                 </div>
                             </form>
                         </div>
-                    </>
+                    </div>
                     :
-                    <>
+                    <div id='signup-box'>
                         <div class="wrapper">
                             <div class="title">
                                 Signup
@@ -131,7 +131,7 @@ export default function UserModelProvider(props) {
                                 </div>
                             </form>
                         </div>
-                    </>
+                    </div>
             }
         </>
     )

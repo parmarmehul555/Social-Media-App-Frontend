@@ -2,10 +2,8 @@ import { useSelector } from "react-redux"
 import useGetUser from "../hooks/useGetUser";
 import '../CSS/home.style.css';
 import { useEffect, useState } from "react";
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import Modal from '@mui/material/Modal';
+import { Box, Button, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, useDisclosure } from "@chakra-ui/react";
+import { Typography } from "@mui/material";
 
 const style = {
     position: 'absolute',
@@ -17,25 +15,20 @@ const style = {
     border: '2px solid #000',
     boxShadow: 24,
     p: 4,
-    height: '70%',
-    overflowY: 'scroll'
 };
 
 const formStyle = {
-    position:"sticky",
-    bottom:"0",
+    position: "sticky",
+    bottom: "0",
 };
 
 export default function Home() {
     const userData = useGetUser();
-
     const [posts, setPosts] = useState([]);
-    const [open, setOpen] = useState(false);
     const [commentData, setCommentData] = useState("");
     const [postComments, setPostComments] = useState([]);
-
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
+    const [comments,setComments] = useState([]);
+    const { isOpen, onOpen, onClose } = useDisclosure()
 
     function handleAllPosts() {
         fetch('http://localhost:3030/user/post/getposts', {
@@ -54,10 +47,8 @@ export default function Home() {
                 }
             })
             .then((res) => {
-                console.log(res);
+                console.log("res is res ",res);
                 setPosts(res);
-                console.log("post comments is ", postComments);
-                console.log("your all posts ", posts);
             })
             .catch((error) => {
                 console.log('Can not get posts!!', error);
@@ -90,12 +81,14 @@ export default function Home() {
             post.postComments.map((comment) => {
                 return (
                     <div className="comment-data">
-                        <div id="post-user-img">
-                            <img src={comment.commentedUser.userImg} alt="user-profile-picture" />
-                        </div>
-                        <div id="post-userdata">
-                            <text id="username">{comment.commentedUser.userName}</text>
-                            <text id="comment">{comment.commentData}</text>
+                        <div id="commentedUser">
+                            <div id="post-user-img">
+                                <img src={comment.commentedUser.userImg} alt="user-profile-picture" />
+                            </div>
+                            <div id="post-userdata">
+                                <text id="username">{comment.commentedUser.userName}</text>
+                                <text id="comment">{comment.commentData}</text>
+                            </div>
                         </div>
                     </div>
                 )
@@ -127,47 +120,45 @@ export default function Home() {
                             handleLikes(data);
                         }}></i>
 
-                        <i className="icon-img" class="fa-regular fa-comment" onClick={handleOpen}></i>
+                        <i className="icon-img" class="fa-regular fa-comment" onClick={onOpen}></i>
 
-                        <Modal
-                            open={open}
-                            onClose={handleClose}
-                            aria-labelledby="modal-modal-title"
-                            aria-describedby="modal-modal-description"
-                        >
-                            <Box sx={style}>
-                                <Typography id="modal-modal-title" variant="h6" component="h2">
-                                    Comments
-                                </Typography>
-                                <Typography id="modal-modal-description" sx={{ mt: 2 }} >
+                        <Modal onClose={onClose} isOpen={isOpen} isCentered>
+                            <ModalOverlay />
+                            <ModalContent>
+                                <ModalHeader>Comments</ModalHeader>
+                                <ModalCloseButton />
+                                <ModalBody>
                                     <div id="show-comment-box">
                                         {formattedComments}
                                     </div>
-                                </Typography>
-                                <Box sx={formStyle}>
-                                    <form class="msger-inputarea" id="comment-box">
-                                        <input type="text" class="msger-input" value={commentData} placeholder="Comment..." onChange={(e) => {
-                                            setCommentData(e.target.value);
-                                        }} />
-                                        <button type="submit" class="msger-send-btn" style={{ backgroundColor: "#022B57" }} onClick={(e) => {
-                                            e.preventDefault();
-                                            let data = {
-                                                userId: userData._id,
-                                                commentData: commentData
-                                            }
-                                            fetch(`http://localhost:3030/user/post/addlikesorcomments/${post._id}`, {
-                                                method: 'PUT',
-                                                body: JSON.stringify(data),
-                                                headers: {
-                                                    'Content-Type': 'application/json',
-                                                    'Authorization': `bearer ${localStorage.getItem('auth-token')}`
+                                    <div>
+                                        <form class="msger-inputarea" id="comment-box">
+                                            <input type="text" class="msger-input" style={{ color: "white" }} value={commentData} placeholder="Comment..." onChange={(e) => {
+                                                setCommentData(e.target.value);
+                                            }} />
+                                            <button type="submit" class="msger-send-btn" style={{ backgroundColor: "#022B57" }} onClick={(e) => {
+                                                e.preventDefault();
+                                                let data = {
+                                                    userId: userData._id,
+                                                    commentData: commentData
                                                 }
-                                            }).then(() => handleAllPosts());
-                                            setCommentData("");
-                                        }}>Send</button>
-                                    </form>
-                                </Box>
-                            </Box>
+                                                fetch(`http://localhost:3030/user/post/addlikesorcomments/${post._id}`, {
+                                                    method: 'PUT',
+                                                    body: JSON.stringify(data),
+                                                    headers: {
+                                                        'Content-Type': 'application/json',
+                                                        'Authorization': `bearer ${localStorage.getItem('auth-token')}`
+                                                    }
+                                                }).then(() => handleAllPosts());
+                                                setCommentData("");
+                                            }}>Send</button>
+                                        </form>
+                                    </div>
+                                </ModalBody>
+                                <ModalFooter>
+                                    <Button onClick={onClose}>Close</Button>
+                                </ModalFooter>
+                            </ModalContent>
                         </Modal>
 
                         <i className="icon-img" class="fa-solid fa-share"></i>
@@ -188,10 +179,10 @@ export default function Home() {
     });
 
     return (
-        <>
+        <div id="all-posts">
             <div className="post-box">
                 {formattedPost}
             </div>
-        </>
+        </div>
     )
 }

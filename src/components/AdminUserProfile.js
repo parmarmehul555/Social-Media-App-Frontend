@@ -64,7 +64,7 @@ export default function AdminUserProfile() {
     })
 
     return (
-        <>
+        <div id="user-box">
             <div className="postBox">
                 <div id='user-profile' className="admin-user-profile">
                     <div id="user-img">
@@ -101,6 +101,6 @@ export default function AdminUserProfile() {
             <div className="row postCard">
                 {formattedUserPosts}
             </div>
-        </>
+        </div>
     )
 }

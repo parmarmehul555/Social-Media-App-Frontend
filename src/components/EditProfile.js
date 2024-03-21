@@ -32,7 +32,7 @@ export default function EditProfile() {
     }
 
     return (
-        <>
+        <div id='edit'>
             <div className='editprofile-card'>
                 <h2>Edit Profile</h2>
                 <form encType='multipart/form-data' id='editprofile' onSubmit={(e) => {
@@ -60,6 +60,6 @@ export default function EditProfile() {
                     <input type='submit' id='save-btn' value={'Save changes'} />
                 </form>
             </div>
-        </>
+        </div>
     )
 }
